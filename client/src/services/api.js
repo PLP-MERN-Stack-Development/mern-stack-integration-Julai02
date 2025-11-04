@@ -38,6 +38,12 @@ api.interceptors.response.use(
   }
 );
 
+const unwrap = (response) => {
+  // Server responses are shaped { success: true, data: ... }
+  if (response && response.data && response.data.data !== undefined) return response.data.data;
+  return response && response.data ? response.data : response;
+};
+
 // Post API services
 export const postService = {
   // Get all posts with optional pagination and filters
@@ -46,44 +52,45 @@ export const postService = {
     if (category) {
       url += `&category=${category}`;
     }
-    const response = await api.get(url);
-    return response.data;
+  const response = await api.get(url);
+  return unwrap(response);
   },
 
   // Get a single post by ID or slug
   getPost: async (idOrSlug) => {
-    const response = await api.get(`/posts/${idOrSlug}`);
-    return response.data;
+  const response = await api.get(`/posts/${idOrSlug}`);
+  return unwrap(response);
   },
 
   // Create a new post
-  createPost: async (postData) => {
-    const response = await api.post('/posts', postData);
-    return response.data;
+  createPost: async (postData, extraHeaders = {}) => {
+    // If postData is FormData, pass through headers (multipart handled by browser)
+    const response = await api.post('/posts', postData, { headers: extraHeaders })
+    return unwrap(response);
   },
 
   // Update an existing post
-  updatePost: async (id, postData) => {
-    const response = await api.put(`/posts/${id}`, postData);
-    return response.data;
+  updatePost: async (id, postData, extraHeaders = {}) => {
+    const response = await api.put(`/posts/${id}`, postData, { headers: extraHeaders });
+    return unwrap(response);
   },
 
   // Delete a post
   deletePost: async (id) => {
-    const response = await api.delete(`/posts/${id}`);
-    return response.data;
+  const response = await api.delete(`/posts/${id}`);
+  return unwrap(response);
   },
 
   // Add a comment to a post
   addComment: async (postId, commentData) => {
-    const response = await api.post(`/posts/${postId}/comments`, commentData);
-    return response.data;
+  const response = await api.post(`/posts/${postId}/comments`, commentData);
+  return unwrap(response);
   },
 
   // Search posts
   searchPosts: async (query) => {
     const response = await api.get(`/posts/search?q=${query}`);
-    return response.data;
+    return unwrap(response);
   },
 };
 
@@ -92,13 +99,13 @@ export const categoryService = {
   // Get all categories
   getAllCategories: async () => {
     const response = await api.get('/categories');
-    return response.data;
+    return unwrap(response);
   },
 
   // Create a new category
   createCategory: async (categoryData) => {
     const response = await api.post('/categories', categoryData);
-    return response.data;
+    return unwrap(response);
   },
 };
 
@@ -107,17 +114,18 @@ export const authService = {
   // Register a new user
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
-    return response.data;
+    return unwrap(response);
   },
 
   // Login user
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    const data = unwrap(response);
+    if (data && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
     }
-    return response.data;
+    return data;
   },
 
   // Logout user

@@ -10,7 +10,7 @@ You will build a blog application with the following features:
 3. Full CRUD functionality for blog posts
 4. User authentication and authorization
 5. Advanced features like image uploads and comments
-
+ 
 ## Project Structure
 
 ```
@@ -76,3 +76,26 @@ Your work will be automatically submitted when you push to your GitHub Classroom
 - [React Documentation](https://react.dev/)
 - [Node.js Documentation](https://nodejs.org/en/docs/)
 - [Mongoose Documentation](https://mongoosejs.com/docs/) 
+
+## Run locally
+
+Prereqs: Node.js (v18+), MongoDB running locally or a connection string.
+
+Server:
+
+```powershell
+cd server
+npm install
+# copy .env.example -> .env and set MONGODB_URI, JWT_SECRET
+npm run dev
+```
+
+Client (Vite):
+
+```powershell
+cd client
+npm install
+npm run dev
+```
+
+The client expects `VITE_API_URL` in `client/.env` (defaults to `http://localhost:5000/api`).

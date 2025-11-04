@@ -1,0 +1,28 @@
+# Node
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# uploads
+server/uploads/
+
+# Editor
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Ignore generated client/node_modules
+client/node_modules/
+
+# Ignore copilot instructions for privacy
+.github/copilot-instructions.md
